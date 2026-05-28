@@ -111,8 +111,12 @@ export class TrendJackPage {
     // ── Actions ────────────────────────────────────────────────────────────────
 
     async navigate(): Promise<void> {
-        await this.page.goto('/');
-        await this.page.locator('[data-testid="stTab"]').first().waitFor({ state: 'visible', timeout: 60000 });
+        const baseUrl = process.env.BASE_URL || 'http://localhost:8501';
+        const isCloud = baseUrl.includes('streamlit.app');
+        const path = isCloud ? '/~/+/' : '/';
+        await this.page.goto(path);
+        await this.page.waitForLoadState('networkidle');
+        await this.page.locator('[data-testid="stTab"]').first().waitFor({ state: 'visible', timeout: 120000 });
     }
 
     async goToHistoryTab(): Promise<void> {
