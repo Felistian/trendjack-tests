@@ -35,17 +35,20 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Start TrendJack
+      - name: Wake up Streamlit Cloud app
         run: |
-          pip install streamlit tavily-python google-genai groq python-dotenv reportlab
-          cd ${{ github.workspace }}
-          nohup py -m streamlit run app.py --server.headless true &
-          sleep 10
-        env:
-          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GROQ_API_KEY:   ${{ secrets.GROQ_API_KEY }}
-        continue-on-error: true
+          echo "Warming up https://trendjack.streamlit.app ..."
+          for i in {1..12}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://trendjack.streamlit.app)
+            echo "Attempt $i — HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "App is up! Waiting 15s for full render..."
+              sleep 15
+              break
+            fi
+            echo "Not ready yet, waiting 10s..."
+            sleep 10
+          done
 
       - name: Run smoke and regression tests
         run: npx playwright test --grep "@smoke|@regression"
