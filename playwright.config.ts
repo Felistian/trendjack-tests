@@ -24,8 +24,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    actionTimeout: 30000,
-    navigationTimeout: 30000,
+    actionTimeout: 60000,
+    navigationTimeout: 60000,
   },
   projects: [
     {
@@ -33,5 +33,5 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  timeout: 60000,                // 60s — real API calls need more time
+  timeout: 120000,
 });

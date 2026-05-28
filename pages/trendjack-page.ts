@@ -64,8 +64,8 @@ export class TrendJackPage {
         this.caption = page.locator('[data-testid="stCaptionContainer"]');
 
         // Tabs
-        this.generateTab = page.locator('[data-testid="stTab"]').first();
-        this.historyTab = page.locator('[data-testid="stTab"]').nth(1);
+        this.generateTab = page.locator('[data-testid="stTab"]').filter({ hasText: 'Generate Campaign' });
+        this.historyTab = page.locator('[data-testid="stTab"]').filter({ hasText: 'Campaign History' });
 
         // Generate Campaign form
         this.keywordInput = page.getByLabel('Enter a keyword or industry');
@@ -112,7 +112,7 @@ export class TrendJackPage {
 
     async navigate(): Promise<void> {
         await this.page.goto('/');
-        await this.page.waitForLoadState('networkidle');
+        await this.page.locator('[data-testid="stTab"]').first().waitFor({ state: 'visible', timeout: 60000 });
     }
 
     async goToHistoryTab(): Promise<void> {
